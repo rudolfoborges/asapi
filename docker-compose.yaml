@@ -1,0 +1,29 @@
+name: asapi
+services:
+    database:
+        image: postgres:17
+        container_name: asapi-postgres
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: asapi
+            POSTGRES_PASSWORD: asapi
+            POSTGRES_DB: asapi
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./.data/database:/var/lib/postgresql/data
+        networks:
+            - asapi
+
+    migration:
+        image: flyway/flyway:9.0
+        command: -community -url=jdbc:postgresql://database:5432/asapi -schemas=public -user=asapi -password=asapi -connectRetries=60 migrate
+        volumes:
+            - ./db/migration:/flyway/sql
+        depends_on:
+            - database
+        networks:
+            - asapi
+
+networks:
+    asapi:
