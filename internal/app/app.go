@@ -11,6 +11,12 @@ func Run() {
 		fx.Provide(config.ServerProvider),
 		fx.Provide(config.DatabaseProvider),
 
+		controllerModule,
+		serviceModule,
+		repositoryModule,
+
+		fx.Decorate(config.Routes),
+
 		fx.Invoke(func(e *echo.Echo) {}),
 	).Run()
 }
